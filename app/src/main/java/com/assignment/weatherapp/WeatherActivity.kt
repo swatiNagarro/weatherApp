@@ -31,7 +31,7 @@ class WeatherActivity : AppCompatActivity() {
         weather_btn.setOnClickListener {
             weatherViewModel.getWeatherData(
                 editTextZipCode.text.toString(),
-                "5bf046eba2982ecb8aa156d679114aad"
+                BuildConfig.API_KEY
             )
             editTextZipCode.text.clear()
         }
