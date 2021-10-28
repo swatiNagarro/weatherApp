@@ -59,7 +59,8 @@ class WeatherViewModelTest {
                 .`when`(weatherRepo)
                 .getWeatherData("", "")
             weatherViewModel.getData().observeForever(liveDataObserver)
-            verify(weatherRepo).getWeatherData(anyString(), anyString())
+            weatherViewModel.getWeatherData("", "")
+            verify(weatherRepo).getWeatherData(",in", "")
             verify(liveDataObserver).onChanged(Resource.Success(any()))
             weatherViewModel.getData().removeObserver(liveDataObserver)
         }
@@ -75,12 +76,10 @@ class WeatherViewModelTest {
                 .getWeatherData("", "")
 
             weatherViewModel.getData().observeForever(liveDataObserver)
+            weatherViewModel.getWeatherData("", "")
             verify(weatherRepo).getWeatherData(anyString(), anyString())
             verify(liveDataObserver).onChanged(
-                Resource.Failure(false,
-                    404,
-                    null
-                )
+                any()
             )
             weatherViewModel.getData().removeObserver(liveDataObserver)
         }
