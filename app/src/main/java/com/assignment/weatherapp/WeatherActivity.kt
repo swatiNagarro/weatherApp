@@ -46,7 +46,7 @@ class WeatherActivity : AppCompatActivity() {
             when (it) {
                 is Resource.Success -> {
                     Log.d("test", "Received data" + it.value.name)
-                    showData()
+                    showData(it.value.name, it.value.weather[0].description)
                 }
                 is Resource.Failure -> {
                     showError()
@@ -59,18 +59,23 @@ class WeatherActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         weather_btn.visibility = View.GONE
         editTextZipCode.visibility = View.GONE
+        weather_data.visibility = View.GONE
     }
 
-    private fun showData() {
+    private fun showData(name: String, desc: String) {
         progressBar.visibility = View.GONE
-        weather_btn.visibility = View.GONE
-        editTextZipCode.visibility = View.GONE
+        weather_btn.visibility = View.VISIBLE
+        editTextZipCode.visibility = View.VISIBLE
+        weather_data.visibility = View.VISIBLE
+        city_name.text = name
+        city_temp_desc.text = desc
     }
 
     private fun showError() {
         progressBar.visibility = View.GONE
         weather_btn.visibility = View.VISIBLE
         editTextZipCode.visibility = View.VISIBLE
+        weather_data.visibility = View.GONE
         Toast.makeText(
             applicationContext, R.string.error_message,
             Toast.LENGTH_LONG

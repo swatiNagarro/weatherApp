@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
-        android:text="@string/get_weather"
+        android:text="@string/show_weather"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/editTextZipCode" />
@@ -50,5 +50,45 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weather_btn" />
+
+    <LinearLayout
+        android:id="@+id/weather_data"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:visibility="gone"
+        android:layout_marginTop="44dp"
+        android:background="@drawable/background"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weather_btn">
+
+        <TextView
+            android:id="@+id/city_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/twenty_margin"
+            android:textSize="@dimen/twenty_five_sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:inputType="textCapSentences"
+            android:textColor="@color/design_default_color_on_secondary"></TextView>
+
+
+        <TextView
+            android:id="@+id/city_temp_desc"
+            android:layout_margin="@dimen/ten_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
+            android:text="Lucknow"
+            android:textSize="@dimen/fifteen_sp"
+            android:gravity="center"
+            android:textColor="@color/purple_700"></TextView>
+
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
