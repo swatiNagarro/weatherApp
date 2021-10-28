@@ -1,16 +1,20 @@
-package com.assignment.weatherapp
+package com.assignment.weatherapp.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.assignment.weatherapp.BuildConfig
+import com.assignment.weatherapp.R
 import com.assignment.weatherapp.network.Resource
 import com.assignment.weatherapp.network.WeatherAPI
 import com.assignment.weatherapp.repository.WeatherRepo
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.math.round
+
+const val celsius_symbol = 0x00B0
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -42,17 +46,32 @@ class WeatherActivity : AppCompatActivity() {
         }
 
 
-        weatherViewModel.liveData.observe(this, {
-            when (it) {
+        weatherViewModel.liveData.observe(this, { resource ->
+            when (resource) {
                 is Resource.Success -> {
-                    Log.d("test", "Received data" + it.value.name)
-                    showData(it.value.name, it.value.weather[0].description)
+                    showData(
+                        resource.value.name,
+                        convertTempInCelsius(resource.value.main.temp).toString()
+                    )
                 }
                 is Resource.Failure -> {
-                    showError()
+                    handleErrorScenarios(resource)
+
                 }
             }
         })
+    }
+
+    private fun handleErrorScenarios(resource: Resource.Failure) {
+        if (resource.isNetworkError) {
+            showError(getString(R.string.error_message_internet_not_present))
+        } else {
+            showError(getString(R.string.error_message))
+        }
+    }
+
+    private fun convertTempInCelsius(temp: Double): Double {
+        return round(temp - 273.15)
     }
 
     private fun updateUIWhenGettingData() {
@@ -68,16 +87,17 @@ class WeatherActivity : AppCompatActivity() {
         editTextZipCode.visibility = View.VISIBLE
         weather_data.visibility = View.VISIBLE
         city_name.text = name
-        city_temp_desc.text = desc
+
+        city_temp_desc.text = desc + celsius_symbol.toChar()
     }
 
-    private fun showError() {
+    private fun showError(message: String) {
         progressBar.visibility = View.GONE
         weather_btn.visibility = View.VISIBLE
         editTextZipCode.visibility = View.VISIBLE
         weather_data.visibility = View.GONE
         Toast.makeText(
-            applicationContext, R.string.error_message,
+            applicationContext, message,
             Toast.LENGTH_LONG
         ).show()
     }

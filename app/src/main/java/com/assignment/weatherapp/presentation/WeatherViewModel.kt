@@ -1,4 +1,4 @@
-package com.assignment.weatherapp
+package com.assignment.weatherapp.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

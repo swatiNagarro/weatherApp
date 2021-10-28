@@ -4,4 +4,5 @@
     <string name="welcome_text">Welcome!</string>
     <string name="show_weather">Show Weather</string>
     <string name="error_message">Please enter valid zipcode.</string>
+    <string name="error_message_internet_not_present">Please check your internet connection.</string>
 </resources>

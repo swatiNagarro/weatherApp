@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WeatherActivity">
+    tools:context=".presentation.WeatherActivity">
 
     <TextView
         android:id="@+id/textView"
@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:inputType="textCapCharacters"
             android:text="Lucknow"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/thirty_sp"
             android:gravity="center"
             android:textColor="@color/purple_700"></TextView>
 
