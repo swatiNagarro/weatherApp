@@ -28,4 +28,7 @@ class WeatherViewModel(private val weatherRepo: WeatherRepo) : ViewModel() {
         liveData = mutableLiveData
     }
 
+    fun getData(): LiveData<Resource<WeatherData>> {
+        return mutableLiveData
+    }
 }
