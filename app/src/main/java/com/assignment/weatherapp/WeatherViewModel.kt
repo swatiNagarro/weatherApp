@@ -5,12 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.assignment.weatherapp.domain.WeatherData
-import com.assignment.weatherapp.network.WeatherAPIService
+import com.assignment.weatherapp.network.Resource
+import com.assignment.weatherapp.repository.WeatherRepo
 import kotlinx.coroutines.launch
 
-class WeatherViewModel(private val weatherAPIService: WeatherAPIService) : ViewModel() {
-    var liveData: LiveData<WeatherData>
-    private var mutableLiveData: MutableLiveData<WeatherData> = MutableLiveData<WeatherData>()
+class WeatherViewModel(private val weatherRepo: WeatherRepo) : ViewModel() {
+    var liveData: LiveData<Resource<WeatherData>>
+    private var mutableLiveData: MutableLiveData<Resource<WeatherData>> =
+        MutableLiveData<Resource<WeatherData>>()
 
     init {
         liveData = mutableLiveData
@@ -18,7 +20,7 @@ class WeatherViewModel(private val weatherAPIService: WeatherAPIService) : ViewM
 
     fun getWeatherData(zipCode: String, api_key: String) {
         viewModelScope.launch {
-            mutableLiveData.value = weatherAPIService.getWeatherDataAsPerLocation(
+            mutableLiveData.value = weatherRepo.getWeatherData(
                 "$zipCode,in",
                 api_key
             )

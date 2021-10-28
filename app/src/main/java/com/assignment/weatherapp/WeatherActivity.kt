@@ -2,10 +2,14 @@ package com.assignment.weatherapp
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.assignment.weatherapp.network.Resource
 import com.assignment.weatherapp.network.WeatherAPI
+import com.assignment.weatherapp.repository.WeatherRepo
 import kotlinx.android.synthetic.main.activity_main.*
 
 class WeatherActivity : AppCompatActivity() {
@@ -13,7 +17,7 @@ class WeatherActivity : AppCompatActivity() {
     private val weatherViewModel: WeatherViewModel by lazy {
         ViewModelProvider(this, viewModelFactory {
             WeatherViewModel(
-                WeatherAPI.retrofitApi
+                WeatherRepo(WeatherAPI.retrofitApi)
             )
         })
             .get(WeatherViewModel::class.java)
@@ -29,6 +33,7 @@ class WeatherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         weather_btn.setOnClickListener {
+            updateUIWhenGettingData()
             weatherViewModel.getWeatherData(
                 editTextZipCode.text.toString(),
                 BuildConfig.API_KEY
@@ -38,7 +43,37 @@ class WeatherActivity : AppCompatActivity() {
 
 
         weatherViewModel.liveData.observe(this, {
-            Log.d("test", "data = " + it.main.temp_max)
+            when (it) {
+                is Resource.Success -> {
+                    Log.d("test", "Received data" + it.value.name)
+                    showData()
+                }
+                is Resource.Failure -> {
+                    showError()
+                }
+            }
         })
+    }
+
+    private fun updateUIWhenGettingData() {
+        progressBar.visibility = View.VISIBLE
+        weather_btn.visibility = View.GONE
+        editTextZipCode.visibility = View.GONE
+    }
+
+    private fun showData() {
+        progressBar.visibility = View.GONE
+        weather_btn.visibility = View.GONE
+        editTextZipCode.visibility = View.GONE
+    }
+
+    private fun showError() {
+        progressBar.visibility = View.GONE
+        weather_btn.visibility = View.VISIBLE
+        editTextZipCode.visibility = View.VISIBLE
+        Toast.makeText(
+            applicationContext, R.string.error_message,
+            Toast.LENGTH_LONG
+        ).show()
     }
 }

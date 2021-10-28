@@ -3,4 +3,5 @@
     <string name="enter_zipcode">Enter zipcode</string>
     <string name="welcome_text">Welcome!</string>
     <string name="get_weather">Get Weather</string>
+    <string name="error_message">Please enter valid zipcode.</string>
 </resources>
