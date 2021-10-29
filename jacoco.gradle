@@ -1,0 +1,156 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+project.afterEvaluate {
+
+    def buildTypes = android.buildTypes.collect { type -> type.name }
+    def productFlavors = android.productFlavors.collect { flavor -> flavor.name }
+
+    // When no product flavors defined, use empty
+    if (!productFlavors) productFlavors.add('')
+
+    productFlavors.each { productFlavorName ->
+        buildTypes.each { buildTypeName ->
+            def sourceName, sourcePath
+            if (!productFlavorName) {
+                sourceName = sourcePath = "${buildTypeName}"
+            } else {
+                sourceName = "${productFlavorName}${buildTypeName.capitalize()}"
+                sourcePath = "${productFlavorName}/${buildTypeName}"
+            }
+            def testTaskName = "test${sourceName.capitalize()}UnitTest"
+
+            // Create coverage task of form 'testFlavorTypeCoverage' depending on 'testFlavorTypeUnitTest'
+            task "${testTaskName}Coverage"(type: JacocoReport, dependsOn: "$testTaskName") {
+                group = "Reporting"
+                description = "Generate Jacoco coverage reports on the ${sourceName.capitalize()} build."
+
+                classDirectories.from = fileTree(dir: "${project.buildDir}/intermediates/javac/${sourcePath}")
+                        .matching { include '**/*Presenter.class' }
+
+                def coverageSourceDirs = [
+                        "src/main/java",
+                        "src/$productFlavorName/java",
+                        "src/$buildTypeName/java"
+                ]
+                additionalSourceDirs.from = files(coverageSourceDirs)
+                sourceDirectories.from = files(coverageSourceDirs)
+                executionData.from = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+
+                reports {
+                    xml.enabled = true
+                    html.enabled = true
+                    xml.destination file("${project.buildDir}/reports/jacocoXml/summary.xml")
+                    html.destination file("${project.buildDir}/reports/jacocoHtml")
+                }
+
+                task "jacocoTestCoverageVerification${buildTypeName}"(type: JacocoCoverageVerification, dependsOn: "${testTaskName}Coverage") {
+                    sourceDirectories.from = files(coverageSourceDirs)
+                    executionData.from = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+                    classDirectories.from = fileTree(dir: "${project.buildDir}/intermediates/classes/${sourcePath}")
+                            .matching { include '**/*Presenter.class' }
+
+                    violationRules {
+                        rule {
+                            element = 'BUNDLE'
+                            includes = [':app']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0.65
+                            }
+                        }
+                        rule {
+                            element = 'BUNDLE'
+                            includes = [':core']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0
+                            }
+                        }
+                        rule {
+                            element = 'BUNDLE'
+                            includes = [':enroll']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0.61
+                            }
+                        }
+                        rule {
+                            element = 'BUNDLE'
+                            includes = [':payment']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0.82
+                            }
+                        }
+                        /*rule {
+                            element = 'BUNDLE'
+                            includes = [':pfm']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0.89
+                            }
+                        }*/
+                        rule {
+                            element = 'BUNDLE'
+                            includes = [':profile']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0.86
+                            }
+                        }
+                        rule {
+                            element = 'BUNDLE'
+                            includes = [':services']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0.95
+                            }
+                        }
+                        rule {
+                            element = 'BUNDLE'
+                            includes = [':loans']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0.90
+                            }
+                        }
+                        rule {
+                            element = 'BUNDLE'
+                            includes = [':enroll_v2']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0.89
+                            }
+                        }
+                        rule {
+                            element = 'BUNDLE'
+                            includes = [':booking']
+                            limit {
+                                counter = 'INSTRUCTION'
+                                value = 'COVEREDRATIO'
+                                minimum = 0.90
+                            }
+                        }
+                    }
+
+                }
+                check.dependsOn "jacocoTestCoverageVerification${buildTypeName}"
+            }
+        }
+
+    }
+
+}
